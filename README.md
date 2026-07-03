@@ -10,4 +10,4 @@ This repository is a static GitHub Pages site. The page entry is `index.html` in
 4. Push to the `main` or `master` branch, or run the workflow manually from `Actions` -> `Deploy index.html to GitHub Pages`.
 5. After the workflow succeeds, open the Pages URL shown in the workflow summary or in `Settings` -> `Pages`.
 
-The workflow is defined in `.github/workflows/deploy-pages.yml`. It uploads the repository root as a static site, so `index.html` is deployed directly without any build step.
+The workflow is defined in `.github/workflows/deploy-pages.yml`. It prepares a small `_site` folder containing `index.html` and `.nojekyll`, then uploads that folder as the GitHub Pages artifact without any build step.
