@@ -328,6 +328,35 @@
       font-size: 15px;
     }
 
+    .cash-flow-card {
+      text-align: center;
+      background: linear-gradient(180deg, #ffffff 0%, #f4fbf7 100%);
+      border-color: #cfeadc;
+    }
+
+    .formula-label {
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .formula-main {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.4;
+      color: #162238;
+    }
+
+    .formula-result {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-weight: 800;
+    }
+
     .chart {
       height: 230px;
       position: relative;
@@ -747,6 +776,7 @@
       </div>
       <nav class="nav-list" aria-label="主导航">
         <button class="nav-item active" data-page="overview">首页总览</button>
+        <button class="nav-item" data-page="income">收入与现金流</button>
         <button class="nav-item" data-page="expense">报销监控</button>
         <button class="nav-item" data-page="purchase">采购付款</button>
         <button class="nav-item" data-page="project">工程付款</button>
@@ -767,6 +797,7 @@
 
       <section class="content">
         <div id="overview" class="page active"></div>
+        <div id="income" class="page"></div>
         <div id="expense" class="page"></div>
         <div id="purchase" class="page"></div>
         <div id="project" class="page"></div>
@@ -786,13 +817,33 @@
     const toastText = "模拟执行成功：正式版将连接飞书审批、多维表格、财务系统和 AI 模型。";
 
     const metricData = [
-      ["本月申请付款总额", "328.6 万", "较上月增加 12.4%"],
-      ["本月已审批付款", "286.4 万", "审批通过率 87.2%"],
+      ["本月总收入", "512.8 万", "租赁与销售收入汇总"],
+      ["本月总支出", "328.6 万", "报销、采购和工程付款"],
+      ["净流入", "184.2 万", "现金流整体健康"],
       ["待审批金额", "92.3 万", "其中高优先级 24.7 万"],
       ["高风险单据", "8 笔", "需财务负责人复核"],
-      ["本月预算使用率", "76%", "接近预算预警线"],
       ["未来 30 天预计支出", "415.8 万", "包含工程进度款"]
     ];
+
+    const incomeMetricData = [
+      ["本月总收入", "512.8 万", "租赁与销售收入汇总"],
+      ["租赁收入", "286.5 万", "收入占比 56%"],
+      ["销售收入", "226.3 万", "收入占比 44%"],
+      ["本月总支出", "328.6 万", "本月资金流出"],
+      ["净流入", "184.2 万", "收入减支出为正"],
+      ["现金流状态", "健康", "经营现金流稳定"]
+    ];
+
+    const incomeTargetData = {
+      leaseAreaTarget: 10000,
+      leaseAreaCompleted: 8420,
+      areaRate: 84.2,
+      amountTarget: 600,
+      amountCompleted: 512.8,
+      amountRate: 85.5,
+      leaseIncomeRate: 95.5,
+      salesIncomeRate: 75.4
+    };
 
     const expenseRows = [
       ["2026-07-01", "陈晓敏", "市场部", "差旅费", "8,260", "FP2026070101", "中风险", "同线路 15 天内出现 3 次报销，建议复核行程必要性。"],
@@ -831,6 +882,16 @@
       ["H 实验室升级", "390 万", "136 万", "38%", "35%", "已验收", "低风险", "付款进度低于工程进度。"]
     ];
 
+    const incomeRows = [
+      ["2026-07-01", "租赁收入", "A 区写字楼客户", "1200㎡", "68.5万", "68.5万", "已回款", "租赁收入稳定到账"],
+      ["2026-07-02", "销售收入", "园区产品销售", "—", "42.6万", "39.8万", "部分回款", "存在 2.8 万待回款"],
+      ["2026-07-03", "租赁收入", "B 区商业客户", "850㎡", "46.2万", "46.2万", "已回款", "回款状态正常"],
+      ["2026-07-04", "销售收入", "渠道销售订单", "—", "58.9万", "52.1万", "部分回款", "建议跟进剩余尾款"],
+      ["2026-07-05", "租赁收入", "C 区仓储客户", "2100㎡", "91.8万", "91.8万", "已回款", "大面积租赁贡献主要收入"],
+      ["2026-07-06", "销售收入", "企业采购订单", "—", "76.4万", "76.4万", "已回款", "销售收入正常到账"],
+      ["2026-07-07", "租赁收入", "D 区办公客户", "640㎡", "31.5万", "0万", "待回款", "需提醒客户付款"]
+    ];
+
     const riskRows = [
       ["2026-07-03 09:20", "重复报销", "林佳 FP2026070302", "高风险", "疑似与历史活动物料发票重复。", "退回补充说明并要求上传原始发票。"],
       ["2026-07-03 10:05", "工程付款超前", "A 厂房改造项目", "高风险", "付款进度 78%，工程进度 62%。", "暂缓付款，要求补充阶段验收材料。"],
@@ -849,28 +910,32 @@
 ## 1. 本月财务支出概况
 本月申请付款总额为 328.6 万元，已审批付款 286.4 万元，待审批金额 92.3 万元。整体付款压力处于中高水平，预算使用率达到 76%，需要关注后续工程进度款与工程材料采购款的集中释放。
 
-## 2. 报销异常分析
+## 2. 收入与现金流分析
+本月总收入为 512.8 万元，其中租赁收入 286.5 万元，销售收入 226.3 万元。本月总支出为 328.6 万元，收入减支出后净流入为 184.2 万元，现金流状态整体健康。月度面积指标完成率为 84.2%，金额指标完成率为 85.5%，说明收入端对支出端形成了一定覆盖，但仍需持续跟进待回款客户和销售尾款。
+
+## 3. 报销异常分析
 员工报销风险主要集中在重复报销、高频小额报销和异常大额报销三类。系统识别到市场部活动物料发票疑似重复，销售部门客户招待费存在单笔金额偏高现象，运营部门交通费存在高频提交特征。
 
-## 3. 采购付款风险
+## 4. 采购付款风险
 采购付款中工程材料占比较高，且华东钢材集团付款集中度达到预警水平。部分设备备件采购价高于近 90 天均价，建议采购部门复核询价过程和合同单价条款。
 
-## 4. 工程付款风险
+## 5. 工程付款风险
 A 厂房改造项目当前工程进度为 62%，付款进度达到 78%，存在付款进度快于工程进度的风险。E 消防改造项目验收材料缺失，付款进度达到 84%，建议暂停后续支付并安排现场复核。
 
-## 5. 市场价格联动影响
+## 6. 市场价格联动影响
 钢材价格指数近 3 个月持续上涨，工程材料采购付款同步上升。若价格继续上涨，未来 30 天采购付款压力将进一步增加，建议提前锁价并建立重点材料价格监控规则。
 
-## 6. 未来 7/30/90 天资金压力预测
+## 7. 未来 7/30/90 天资金压力预测
 - 未来 7 天预计支出 96.5 万元，主要来自审批中报销和采购到货款。
 - 未来 30 天预计支出 415.8 万元，主要来自工程进度款、工程材料采购和供应商月结。
 - 未来 90 天预计支出 1,126.0 万元，需结合项目节点、合同账期和预算释放计划进行滚动预测。
 
-## 7. 管理建议
+## 8. 管理建议
 建议优先复核 8 笔高风险单据，对工程付款超前、供应商集中度和材料价格上涨建立专项预警规则。正式版可接入飞书审批、多维表格、财务系统与大模型 API，形成从数据采集、规则识别、AI 分析到协同处置的闭环。`;
 
     const pages = {
       overview: document.getElementById("overview"),
+      income: document.getElementById("income"),
       expense: document.getElementById("expense"),
       purchase: document.getElementById("purchase"),
       project: document.getElementById("project"),
@@ -944,6 +1009,65 @@ A 厂房改造项目当前工程进度为 62%，付款进度达到 78%，存在�
           </div>
         </div>
       `).join("")}</div>`;
+    }
+
+    function incomeMetricCards() {
+      return `<div class="grid metrics">${incomeMetricData.map(item => {
+        const isGood = item[0] === "净流入" || item[0] === "现金流状态";
+        return `
+          <div class="card metric-card">
+            <div class="metric-label">${item[0]}</div>
+            <div>
+              <div class="metric-value" style="color:${isGood ? "var(--green)" : "#162238"}">${item[1]}</div>
+              <div class="metric-tip" style="color:${isGood ? "var(--green)" : "var(--muted)"}">${item[2]}</div>
+            </div>
+          </div>
+        `;
+      }).join("")}</div>`;
+    }
+
+    function cashFlowFormulaCard() {
+      return `
+        <div class="card cash-flow-card">
+          <div class="formula-label">收入 - 支出 = 净流入</div>
+          <div class="formula-main">512.8 万 - 328.6 万 = 184.2 万</div>
+          <div class="formula-result">现金流状态：健康</div>
+        </div>
+      `;
+    }
+
+    function incomeProgressCard(title, data) {
+      return `
+        <div class="card">
+          <div class="card-title">${title}<small>经营指标</small></div>
+          <div class="progress-list">
+            ${data.map(item => {
+              const color = item.value > 85 ? "var(--green)" : item.value >= 75 ? "var(--orange)" : "var(--red)";
+              return `
+                <div>
+                  <div class="progress-head"><span>${item.name}</span><strong>${item.value}%</strong></div>
+                  <div class="progress-track"><div class="progress-fill" style="width:${item.value}%;background:${color}"></div></div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function incomeDonutChart(title) {
+      return `
+        <div class="card">
+          <div class="card-title">${title}<small>模拟占比</small></div>
+          <div class="donut-wrap">
+            <div class="donut" style="background:conic-gradient(#1f9d62 0 56%, #2d6cdf 56% 100%)"></div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-left"><span class="dot" style="background:#1f9d62"></span>租赁收入</span><strong>56%</strong></div>
+              <div class="legend-item"><span class="legend-left"><span class="dot" style="background:#2d6cdf"></span>销售收入</span><strong>44%</strong></div>
+            </div>
+          </div>
+        </div>
+      `;
     }
 
     function lineChart(title, labels, points, color = "#2d6cdf") {
@@ -1038,12 +1162,12 @@ A 厂房改造项目当前工程进度为 62%，付款进度达到 78%，存在�
        ========================================================== */
     function renderOverview() {
       pages.overview.innerHTML = `
-        ${pageHead("首页总览", "模拟汇总飞书审批、报销、采购付款和工程付款数据，实时展示资金压力与风险分布。",
+        ${pageHead("首页总览", "模拟汇总收入、报销、采购付款和工程付款数据，实时展示现金流、资金压力与风险分布。",
           actionButtons(["同步飞书数据", "生成 AI 风险摘要", "推送至财务负责人"]))}
         ${metricCards()}
         <div class="card ai-card" style="margin-bottom:16px;">
           <strong>AI 摘要</strong>
-          本周企业付款压力处于中高水平，主要风险集中在工程项目进度款、采购材料价格上涨和部分员工报销异常。系统建议优先复核 8 笔高风险单据，并对未来 30 天资金支出预留约 415.8 万元。
+          本月收入 512.8 万元，支出 328.6 万元，净流入 184.2 万元，现金流整体健康。但未来 30 天预计支出 415.8 万元，需要继续关注工程进度款、采购付款和待回款客户。
         </div>
         <div class="grid cols-2">
           ${lineChart("每日付款趋势", ["7/1", "7/3", "7/5", "7/7", "7/9", "7/11"], "25,148 115,118 205,132 295,76 385,96 485,46")}
@@ -1060,6 +1184,43 @@ A 厂房改造项目当前工程进度为 62%，付款进度达到 78%，存在�
             { label: "中风险", value: "16", height: 104, type: "orange" },
             { label: "低风险", value: "42", height: 72, type: "green" }
           ])}
+        </div>
+      `;
+    }
+
+    function renderIncome() {
+      pages.income.innerHTML = `
+        ${pageHead("收入与现金流", "模拟展示租赁收入、销售收入、月度面积指标、金额指标完成率，并通过“收入 - 支出 = 净流入”体现企业现金流状态。",
+          actionButtons(["同步收入数据", "生成现金流分析", "推送给经营负责人"]))}
+        ${incomeMetricCards()}
+        <div class="card ai-card" style="margin-bottom:16px;">
+          <strong>AI 摘要</strong>
+          本月总收入 512.8 万元，其中租赁收入 286.5 万元、销售收入 226.3 万元。本月总支出 328.6 万元，计算后净流入为 184.2 万元，现金流处于健康状态。当前面积指标完成率为 84.2%，金额指标完成率为 85.5%，建议继续跟进待回款客户和销售尾款。
+        </div>
+        <div style="margin-bottom:16px;">
+          ${cashFlowFormulaCard()}
+        </div>
+        <div class="grid cols-2" style="margin-bottom:16px;">
+          ${incomeProgressCard("月度经营指标完成率", [
+            { name: "月度面积指标完成率", value: incomeTargetData.areaRate },
+            { name: "月度金额指标完成率", value: incomeTargetData.amountRate },
+            { name: "租赁收入目标完成率", value: incomeTargetData.leaseIncomeRate },
+            { name: "销售收入目标完成率", value: incomeTargetData.salesIncomeRate }
+          ])}
+          <div class="card">
+            <div class="card-title">指标完成明细<small>目标 vs 完成</small></div>
+            <div class="explain-list">
+              <div class="explain-item"><span class="check">✓</span><div>租赁面积目标 ${incomeTargetData.leaseAreaTarget} ㎡，已完成 ${incomeTargetData.leaseAreaCompleted} ㎡。</div></div>
+              <div class="explain-item"><span class="check">✓</span><div>月度金额目标 ${incomeTargetData.amountTarget} 万，已完成 ${incomeTargetData.amountCompleted} 万。</div></div>
+              <div class="explain-item"><span class="check">✓</span><div>收入端已覆盖本月支出，仍需关注待回款客户和部分销售尾款。</div></div>
+            </div>
+          </div>
+          ${lineChart("月度收入趋势", ["3月", "4月", "5月", "6月", "7月", "预测"], "25,142 115,128 205,106 295,86 385,58 485,42", "#1f9d62")}
+          ${incomeDonutChart("收入结构占比")}
+        </div>
+        <div class="card">
+          <div class="card-title">收入明细表格<small>Mock 数据</small></div>
+          ${table(["日期", "收入类型", "客户/项目", "面积", "应收金额", "实收金额", "回款状态", "AI 提示"], incomeRows)}
         </div>
       `;
     }
@@ -1261,6 +1422,8 @@ A 厂房改造项目当前工程进度为 62%，付款进度达到 78%，存在�
               <div class="explain-item"><span class="check">✓</span><div>接入飞书审批，采集员工报销、采购付款、工程付款等流程数据。</div></div>
               <div class="explain-item"><span class="check">✓</span><div>接入飞书多维表格，沉淀风控台账、处理状态和责任人协同记录。</div></div>
               <div class="explain-item"><span class="check">✓</span><div>接入财务系统、预算系统和合同系统，形成真实资金预测与预算预警。</div></div>
+              <div class="explain-item"><span class="check">✓</span><div>接入租赁系统、销售系统和回款台账，形成收入、支出、净流入一体化现金流分析。</div></div>
+              <div class="explain-item"><span class="check">✓</span><div>支持按月度面积指标、金额指标、回款状态进行经营分析和预警。</div></div>
               <div class="explain-item"><span class="check">✓</span><div>接入大模型 API、真实风控规则和权限系统，完成风险识别、报告生成和闭环处置。</div></div>
             </div>
           </div>
@@ -1286,6 +1449,7 @@ A 厂房改造项目当前工程进度为 62%，付款进度达到 78%，存在�
        ========================================================== */
     function renderAllPages() {
       renderOverview();
+      renderIncome();
       renderExpense();
       renderPurchase();
       renderProject();
