@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>智财风控驾驶舱</title>
+  <style>
+    /* =========================
+       基础样式：可在这里调整整体色调
+       ========================= */
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --panel-soft: #f8fbff;
+      --line: #e5eaf2;
+      --text: #1f2a3d;
+      --muted: #667085;
+      --nav: #172235;
+      --nav-active: #253b5b;
+      --blue: #2d6cdf;
+      --blue-soft: #eaf2ff;
+      --cyan: #1c9bb6;
+      --green: #1f9d62;
+      --green-soft: #e8f6ef;
+      --orange: #d9822b;
+      --orange-soft: #fff4e5;
+      --red: #d64545;
+      --red-soft: #fff0f0;
+      --shadow: 0 8px 24px rgba(31, 42, 61, 0.07);
+      --radius: 8px;
+      --sidebar: 232px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", Arial, sans-serif;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* =========================
+       左侧导航
+       ========================= */
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: var(--sidebar);
+      background: var(--nav);
+      color: #d9e3f3;
+      padding: 22px 16px;
+      z-index: 20;
+    }
+
+    .brand {
+      padding: 4px 8px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 18px;
+    }
+
+    .brand-title {
+      font-size: 21px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      line-height: 1.5;
+      color: #aebbd0;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-item {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #d9e3f3;
+      text-align: left;
+      padding: 12px 12px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s, transform 0.18s;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: var(--nav-active);
+      color: #ffffff;
+    }
+
+    .nav-item:active {
+      transform: translateY(1px);
+    }
+
+    /* =========================
+       顶部栏与主内容
+       ========================= */
+    .main {
+      margin-left: var(--sidebar);
+      width: calc(100% - var(--sidebar));
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 18px 28px;
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(8px);
+    }
+
+    .top-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .top-subtitle,
+    .top-note {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .top-note {
+      white-space: nowrap;
+      background: #eef3f9;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+    }
+
+    .content {
+      padding: 24px 28px 36px;
+    }
+
+    .page {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: 9px 13px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(31, 42, 61, 0.04);
+      transition: transform 0.16s, border-color 0.16s, background 0.16s;
+      min-height: 38px;
+    }
+
+    .btn:hover {
+      border-color: #bfd0e8;
+      background: #f8fbff;
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn.primary {
+      background: var(--blue);
+      color: #ffffff;
+      border-color: var(--blue);
+    }
+
+    .btn.primary:hover {
+      background: #245fc4;
+    }
+
+    .btn.filter.active {
+      background: var(--blue-soft);
+      border-color: #9fc0f5;
+      color: #174eab;
+      font-weight: 700;
+    }
+
+    /* =========================
+       通用卡片、指标、图表
+       ========================= */
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid.cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .metrics {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .metric-card {
+      min-height: 112px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .metric-label {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .metric-value {
+      font-size: 26px;
+      font-weight: 800;
+      color: #162238;
+      margin-top: 10px;
+    }
+
+    .metric-tip {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .card-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .card-title small {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .ai-card {
+      background: var(--blue-soft);
+      border-color: #cfe0fb;
+      color: #17345e;
+      line-height: 1.75;
+    }
+
+    .ai-card strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #12315d;
+      font-size: 15px;
+    }
+
+    .chart {
+      height: 230px;
+      position: relative;
+    }
+
+    .line-chart svg,
+    .compare-chart svg {
+      width: 100%;
+      height: 190px;
+      display: block;
+    }
+
+    .axis-labels {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 12px;
+      padding-top: 6px;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 90px 1fr 58px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .bar-name {
+      color: #344054;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bar-track {
+      height: 10px;
+      background: #edf1f7;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #4b83e6, #62b1d0);
+    }
+
+    .bar-value {
+      text-align: right;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .donut-wrap {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 18px;
+      align-items: center;
+      min-height: 190px;
+    }
+
+    .donut {
+      width: 142px;
+      height: 142px;
+      border-radius: 50%;
+      background:
+        conic-gradient(#2d6cdf 0 42%, #1c9bb6 42% 67%, #d9822b 67% 84%, #1f9d62 84% 100%);
+      position: relative;
+      margin: auto;
+    }
+
+    .donut::after {
+      content: "";
+      position: absolute;
+      inset: 26px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: inset 0 0 0 1px var(--line);
+    }
+
+    .legend {
+      display: grid;
+      gap: 10px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+    }
+
+    .legend-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .column-chart {
+      height: 190px;
+      display: flex;
+      align-items: end;
+      gap: 20px;
+      padding: 20px 8px 2px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      min-width: 44px;
+    }
+
+    .column-fill {
+      width: 36px;
+      border-radius: 6px 6px 0 0;
+      background: #6f9be8;
+    }
+
+    .column.red .column-fill { background: var(--red); }
+    .column.orange .column-fill { background: var(--orange); }
+    .column.green .column-fill { background: var(--green); }
+
+    .column-label {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* =========================
+       表格与风险标签
+       ========================= */
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #ffffff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+    }
+
+    th,
+    td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      line-height: 1.55;
+    }
+
+    th {
+      background: #f7f9fc;
+      color: #344054;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    tr:hover td {
+      background: #fbfdff;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 54px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tag.high {
+      color: var(--red);
+      background: var(--red-soft);
+      border: 1px solid #ffd0d0;
+    }
+
+    .tag.mid {
+      color: var(--orange);
+      background: var(--orange-soft);
+      border: 1px solid #ffe0b5;
+    }
+
+    .tag.low {
+      color: var(--green);
+      background: var(--green-soft);
+      border: 1px solid #bfe8d2;
+    }
+
+    .risk-card {
+      border-left: 4px solid var(--orange);
+    }
+
+    .risk-card.high {
+      border-left-color: var(--red);
+    }
+
+    .risk-card.low {
+      border-left-color: var(--green);
+    }
+
+    .risk-title {
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .risk-text {
+      color: var(--muted);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .progress-list {
+      display: grid;
+      gap: 13px;
+    }
+
+    .progress-head {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 7px;
+      color: #344054;
+    }
+
+    .progress-track {
+      height: 10px;
+      border-radius: 999px;
+      background: #edf1f7;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: #2d6cdf;
+    }
+
+    .progress-fill.warn {
+      background: var(--orange);
+    }
+
+    .progress-fill.danger {
+      background: var(--red);
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .report {
+      line-height: 1.85;
+      color: #26364d;
+    }
+
+    .report h2 {
+      margin: 0 0 14px;
+      font-size: 22px;
+    }
+
+    .report h3 {
+      margin: 18px 0 8px;
+      font-size: 16px;
+      color: #172235;
+    }
+
+    .report p,
+    .report li {
+      color: #43546d;
+    }
+
+    .report ul {
+      padding-left: 22px;
+      margin: 8px 0;
+    }
+
+    .explain-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .explain-item {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #ffffff;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .check {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--green-soft);
+      color: var(--green);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      font-weight: 800;
+    }
+
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: min(460px, calc(100vw - 48px));
+      background: #172235;
+      color: #ffffff;
+      border-radius: var(--radius);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.22);
+      padding: 14px 16px;
+      line-height: 1.6;
+      transform: translateY(18px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 50;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 1180px) {
+      .metrics {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid.cols-4,
+      .grid.cols-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 840px) {
+      :root {
+        --sidebar: 0px;
+      }
+
+      .sidebar {
+        position: static;
+        width: 100%;
+        min-height: auto;
+      }
+
+      .app {
+        display: block;
+      }
+
+      .main {
+        width: 100%;
+        margin-left: 0;
+      }
+
+      .topbar,
+      .section-head {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .top-note {
+        white-space: normal;
+      }
+
+      .metrics,
+      .grid.cols-2,
+      .grid.cols-3,
+      .grid.cols-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .donut-wrap {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-title">智财风控驾驶舱</div>
+        <div class="brand-sub">财务实时看板与风险预警概念验证原型</div>
+      </div>
+      <nav class="nav-list" aria-label="主导航">
+        <button class="nav-item active" data-page="overview">首页总览</button>
+        <button class="nav-item" data-page="expense">报销监控</button>
+        <button class="nav-item" data-page="purchase">采购付款</button>
+        <button class="nav-item" data-page="project">工程付款</button>
+        <button class="nav-item" data-page="risk">风险预警中心</button>
+        <button class="nav-item" data-page="report">AI 分析报告</button>
+        <button class="nav-item" data-page="about">系统说明</button>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="top-title">智财风控驾驶舱</div>
+          <div class="top-subtitle">基于飞书流程数据的 AI 财务实时看板与风险预警系统</div>
+        </div>
+        <div class="top-note">Throwaway Prototype / Mock 数据 / 飞书模拟接入</div>
+      </header>
+
+      <section class="content">
+        <div id="overview" class="page active"></div>
+        <div id="expense" class="page"></div>
+        <div id="purchase" class="page"></div>
+        <div id="project" class="page"></div>
+        <div id="risk" class="page"></div>
+        <div id="report" class="page"></div>
+        <div id="about" class="page"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    /* ==========================================================
+       模拟数据区：后续改 Demo 文案和数据，优先修改这里
+       ========================================================== */
+    const toastText = "模拟执行成功：正式版将连接飞书审批、多维表格、财务系统和 AI 模型。";
+
+    const metricData = [
+      ["本月申请付款总额", "328.6 万", "较上月增加 12.4%"],
+      ["本月已审批付款", "286.4 万", "审批通过率 87.2%"],
+      ["待审批金额", "92.3 万", "其中高优先级 24.7 万"],
+      ["高风险单据", "8 笔", "需财务负责人复核"],
+      ["本月预算使用率", "76%", "接近预算预警线"],
+      ["未来 30 天预计支出", "415.8 万", "包含工程进度款"]
+    ];
+
+    const expenseRows = [
+      ["2026-07-01", "陈晓敏", "市场部", "差旅费", "8,260", "FP2026070101", "中风险", "同线路 15 天内出现 3 次报销，建议复核行程必要性。"],
+      ["2026-07-01", "李文浩", "销售一部", "客户招待", "12,480", "FP2026070102", "高风险", "金额高于部门均值 210%，且审批备注较少。"],
+      ["2026-07-02", "赵宁", "研发部", "办公用品", "980", "FP2026070201", "低风险", "金额与历史区间匹配。"],
+      ["2026-07-02", "王璐", "运营部", "交通费", "428", "FP2026070202", "中风险", "近 7 天小额交通费提交频次偏高。"],
+      ["2026-07-03", "周立", "工程部", "住宿费", "6,780", "FP2026070301", "低风险", "项目外勤记录匹配。"],
+      ["2026-07-03", "林佳", "市场部", "活动物料", "18,900", "FP2026070302", "高风险", "发票号与历史报销存在相似记录，建议查重。"],
+      ["2026-07-04", "孙凯", "采购部", "交通费", "350", "FP2026070401", "低风险", "金额较小且审批链完整。"],
+      ["2026-07-05", "何雨", "人力资源部", "培训费", "9,600", "FP2026070501", "中风险", "培训供应商首次出现，建议补充合同附件。"],
+      ["2026-07-06", "马骁", "销售二部", "客户招待", "15,260", "FP2026070601", "高风险", "单笔金额超过部门阈值，需二次确认。"],
+      ["2026-07-07", "郑可", "财务部", "办公用品", "1,240", "FP2026070701", "低风险", "采购清单与发票匹配。"]
+    ];
+
+    const purchaseRows = [
+      ["2026-07-01", "华东钢材集团", "工程材料", "58.6 万", "HT-CG-2026-071", "预付款", "高风险", "钢材指数上涨，付款集中于单一供应商。"],
+      ["2026-07-02", "云启软件服务", "软件服务", "18.2 万", "HT-CG-2026-072", "阶段款", "低风险", "合同里程碑与验收单一致。"],
+      ["2026-07-03", "瑞林机电", "设备备件", "24.7 万", "HT-CG-2026-073", "到货款", "中风险", "同类备件采购价高于近 90 天均价 9%。"],
+      ["2026-07-04", "远筑建材", "工程材料", "43.5 万", "HT-CG-2026-074", "进度款", "高风险", "材料价格波动较大，建议复核单价条款。"],
+      ["2026-07-05", "锦程物流", "物流运输", "9.8 万", "HT-CG-2026-075", "月结款", "低风险", "费用与运输里程匹配。"],
+      ["2026-07-06", "北辰咨询", "专业服务", "16.4 万", "HT-CG-2026-076", "尾款", "中风险", "尾款支付前需补充成果确认记录。"],
+      ["2026-07-07", "卓越办公", "办公采购", "7.3 万", "HT-CG-2026-077", "到货款", "低风险", "采购价格稳定。"],
+      ["2026-07-08", "恒安安防", "安防设备", "31.9 万", "HT-CG-2026-078", "阶段款", "中风险", "安装验收附件不完整。"],
+      ["2026-07-09", "华东钢材集团", "工程材料", "66.1 万", "HT-CG-2026-079", "进度款", "高风险", "供应商集中度进一步升高。"],
+      ["2026-07-10", "金桥电气", "电气材料", "22.5 万", "HT-CG-2026-080", "预付款", "中风险", "预付款比例接近合同上限。"]
+    ];
+
+    const projectRows = [
+      ["A 厂房改造项目", "780 万", "608 万", "62%", "78%", "阶段验收待补充", "高风险", "付款进度快于工程进度，建议暂缓付款。"],
+      ["B 仓储扩建项目", "520 万", "286 万", "55%", "55%", "已验收", "低风险", "工程进度与付款进度基本一致。"],
+      ["C 办公楼装修", "260 万", "182 万", "68%", "70%", "部分验收", "中风险", "付款略快于工程进度，需关注尾款比例。"],
+      ["D 产线基础施工", "910 万", "410 万", "48%", "45%", "已验收", "低风险", "付款节奏可控。"],
+      ["E 消防改造", "145 万", "122 万", "72%", "84%", "验收资料缺失", "高风险", "验收材料不足且付款进度偏快。"],
+      ["F 园区道路修缮", "330 万", "196 万", "61%", "59%", "已验收", "低风险", "进度匹配。"],
+      ["G 设备基础改造", "440 万", "315 万", "66%", "72%", "部分验收", "中风险", "建议补充现场照片和监理记录。"],
+      ["H 实验室升级", "390 万", "136 万", "38%", "35%", "已验收", "低风险", "付款进度低于工程进度。"]
+    ];
+
+    const riskRows = [
+      ["2026-07-03 09:20", "重复报销", "林佳 FP2026070302", "高风险", "疑似与历史活动物料发票重复。", "退回补充说明并要求上传原始发票。"],
+      ["2026-07-03 10:05", "工程付款超前", "A 厂房改造项目", "高风险", "付款进度 78%，工程进度 62%。", "暂缓付款，要求补充阶段验收材料。"],
+      ["2026-07-03 10:36", "市场价格上涨", "工程材料采购", "中风险", "钢材价格指数连续 3 个月上涨。", "建议采购提前锁价并动态调整预算。"],
+      ["2026-07-03 11:10", "供应商集中度", "华东钢材集团", "高风险", "单一供应商付款占工程材料 54%。", "启动替代供应商评估。"],
+      ["2026-07-03 12:18", "预算超支", "市场部活动预算", "中风险", "预算使用率达到 88%。", "冻结非必要活动支出。"],
+      ["2026-07-03 13:30", "高频小额报销", "王璐交通费", "中风险", "7 天内提交 6 笔小额交通费。", "合并审核并核对出行记录。"],
+      ["2026-07-03 14:15", "尾款风险", "北辰咨询尾款", "中风险", "成果确认记录不完整。", "补充验收确认后再支付。"],
+      ["2026-07-03 15:02", "异常大额报销", "李文浩客户招待", "高风险", "单笔金额高于部门均值 210%。", "提交业务说明并由负责人复核。"],
+      ["2026-07-03 15:40", "工程付款超前", "E 消防改造", "高风险", "付款进度 84%，验收资料缺失。", "暂停后续付款并安排现场复核。"],
+      ["2026-07-03 16:05", "预算超支", "采购部备件预算", "低风险", "预算使用率 72%，尚未触发红线。", "保持监控。"]
+    ];
+
+    const reportMarkdown = `# 财务风控与资金预测报告
+
+## 1. 本月财务支出概况
+本月申请付款总额为 328.6 万元，已审批付款 286.4 万元，待审批金额 92.3 万元。整体付款压力处于中高水平，预算使用率达到 76%，需要关注后续工程进度款与工程材料采购款的集中释放。
+
+## 2. 报销异常分析
+员工报销风险主要集中在重复报销、高频小额报销和异常大额报销三类。系统识别到市场部活动物料发票疑似重复，销售部门客户招待费存在单笔金额偏高现象，运营部门交通费存在高频提交特征。
+
+## 3. 采购付款风险
+采购付款中工程材料占比较高，且华东钢材集团付款集中度达到预警水平。部分设备备件采购价高于近 90 天均价，建议采购部门复核询价过程和合同单价条款。
+
+## 4. 工程付款风险
+A 厂房改造项目当前工程进度为 62%，付款进度达到 78%，存在付款进度快于工程进度的风险。E 消防改造项目验收材料缺失，付款进度达到 84%，建议暂停后续支付并安排现场复核。
+
+## 5. 市场价格联动影响
+钢材价格指数近 3 个月持续上涨，工程材料采购付款同步上升。若价格继续上涨，未来 30 天采购付款压力将进一步增加，建议提前锁价并建立重点材料价格监控规则。
+
+## 6. 未来 7/30/90 天资金压力预测
+- 未来 7 天预计支出 96.5 万元，主要来自审批中报销和采购到货款。
+- 未来 30 天预计支出 415.8 万元，主要来自工程进度款、工程材料采购和供应商月结。
+- 未来 90 天预计支出 1,126.0 万元，需结合项目节点、合同账期和预算释放计划进行滚动预测。
+
+## 7. 管理建议
+建议优先复核 8 笔高风险单据，对工程付款超前、供应商集中度和材料价格上涨建立专项预警规则。正式版可接入飞书审批、多维表格、财务系统与大模型 API，形成从数据采集、规则识别、AI 分析到协同处置的闭环。`;
+
+    const pages = {
+      overview: document.getElementById("overview"),
+      expense: document.getElementById("expense"),
+      purchase: document.getElementById("purchase"),
+      project: document.getElementById("project"),
+      risk: document.getElementById("risk"),
+      report: document.getElementById("report"),
+      about: document.getElementById("about")
+    };
+
+    /* ==========================================================
+       通用渲染函数
+       ========================================================== */
+    function riskClass(level) {
+      if (level === "高风险") return "high";
+      if (level === "中风险") return "mid";
+      return "low";
+    }
+
+    function riskTag(level) {
+      return `<span class="tag ${riskClass(level)}">${level}</span>`;
+    }
+
+    function showToast(message = toastText) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function actionButtons(names, primaryIndex = 0) {
+      return `<div class="actions">${names.map((name, index) =>
+        `<button class="btn ${index === primaryIndex ? "primary" : ""}" data-action>${name}</button>`
+      ).join("")}</div>`;
+    }
+
+    function pageHead(title, desc, buttons) {
+      return `
+        <div class="section-head">
+          <div>
+            <h1 class="section-title">${title}</h1>
+            <p class="section-desc">${desc}</p>
+          </div>
+          ${buttons || ""}
+        </div>
+      `;
+    }
+
+    function table(headers, rows) {
+      return `
+        <div class="table-wrap">
+          <table>
+            <thead><tr>${headers.map(h => `<th>${h}</th>`).join("")}</tr></thead>
+            <tbody>
+              ${rows.map(row => `<tr>${row.map((cell, index) => {
+                const isRisk = headers[index] === "风险等级";
+                return `<td>${isRisk ? riskTag(cell) : cell}</td>`;
+              }).join("")}</tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function metricCards() {
+      return `<div class="grid metrics">${metricData.map(item => `
+        <div class="card metric-card">
+          <div class="metric-label">${item[0]}</div>
+          <div>
+            <div class="metric-value">${item[1]}</div>
+            <div class="metric-tip">${item[2]}</div>
+          </div>
+        </div>
+      `).join("")}</div>`;
+    }
+
+    function lineChart(title, labels, points, color = "#2d6cdf") {
+      return `
+        <div class="card">
+          <div class="card-title">${title}<small>模拟趋势</small></div>
+          <div class="chart line-chart">
+            <svg viewBox="0 0 520 190" preserveAspectRatio="none" aria-hidden="true">
+              <line x1="20" y1="165" x2="500" y2="165" stroke="#e5eaf2" />
+              <line x1="20" y1="120" x2="500" y2="120" stroke="#eef2f7" />
+              <line x1="20" y1="75" x2="500" y2="75" stroke="#eef2f7" />
+              <polyline points="${points}" fill="none" stroke="${color}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+              ${points.split(" ").map(p => {
+                const [x, y] = p.split(",");
+                return `<circle cx="${x}" cy="${y}" r="4" fill="#ffffff" stroke="${color}" stroke-width="3" />`;
+              }).join("")}
+            </svg>
+            <div class="axis-labels">${labels.map(label => `<span>${label}</span>`).join("")}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function barList(title, data) {
+      return `
+        <div class="card">
+          <div class="card-title">${title}<small>单位：万元</small></div>
+          <div class="bar-list">
+            ${data.map(item => `
+              <div class="bar-row">
+                <div class="bar-name">${item.name}</div>
+                <div class="bar-track"><div class="bar-fill" style="width:${item.percent}%"></div></div>
+                <div class="bar-value">${item.value}</div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function donutChart(title) {
+      return `
+        <div class="card">
+          <div class="card-title">${title}<small>模拟占比</small></div>
+          <div class="donut-wrap">
+            <div class="donut"></div>
+            <div class="legend">
+              <div class="legend-item"><span class="legend-left"><span class="dot" style="background:#2d6cdf"></span>工程付款</span><strong>42%</strong></div>
+              <div class="legend-item"><span class="legend-left"><span class="dot" style="background:#1c9bb6"></span>采购付款</span><strong>25%</strong></div>
+              <div class="legend-item"><span class="legend-left"><span class="dot" style="background:#d9822b"></span>员工报销</span><strong>17%</strong></div>
+              <div class="legend-item"><span class="legend-left"><span class="dot" style="background:#1f9d62"></span>其他支出</span><strong>16%</strong></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function columnChart(title, data) {
+      return `
+        <div class="card">
+          <div class="card-title">${title}<small>笔数</small></div>
+          <div class="column-chart">
+            ${data.map(item => `
+              <div class="column ${item.type}">
+                <div class="column-fill" style="height:${item.height}px"></div>
+                <div class="column-label">${item.label}<br>${item.value}</div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function progressCard(title, data) {
+      return `
+        <div class="card">
+          <div class="card-title">${title}<small>预算消耗</small></div>
+          <div class="progress-list">
+            ${data.map(item => `
+              <div>
+                <div class="progress-head"><span>${item.name}</span><strong>${item.value}%</strong></div>
+                <div class="progress-track"><div class="progress-fill ${item.value >= 85 ? "danger" : item.value >= 75 ? "warn" : ""}" style="width:${item.value}%"></div></div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    /* ==========================================================
+       页面渲染
+       ========================================================== */
+    function renderOverview() {
+      pages.overview.innerHTML = `
+        ${pageHead("首页总览", "模拟汇总飞书审批、报销、采购付款和工程付款数据，实时展示资金压力与风险分布。",
+          actionButtons(["同步飞书数据", "生成 AI 风险摘要", "推送至财务负责人"]))}
+        ${metricCards()}
+        <div class="card ai-card" style="margin-bottom:16px;">
+          <strong>AI 摘要</strong>
+          本周企业付款压力处于中高水平，主要风险集中在工程项目进度款、采购材料价格上涨和部分员工报销异常。系统建议优先复核 8 笔高风险单据，并对未来 30 天资金支出预留约 415.8 万元。
+        </div>
+        <div class="grid cols-2">
+          ${lineChart("每日付款趋势", ["7/1", "7/3", "7/5", "7/7", "7/9", "7/11"], "25,148 115,118 205,132 295,76 385,96 485,46")}
+          ${barList("部门支出排行", [
+            { name: "工程部", value: "126.8", percent: 92 },
+            { name: "采购部", value: "96.4", percent: 74 },
+            { name: "市场部", value: "42.9", percent: 45 },
+            { name: "销售部", value: "36.2", percent: 38 },
+            { name: "研发部", value: "26.3", percent: 31 }
+          ])}
+          ${donutChart("支出类型占比")}
+          ${columnChart("风险等级分布", [
+            { label: "高风险", value: "8", height: 138, type: "red" },
+            { label: "中风险", value: "16", height: 104, type: "orange" },
+            { label: "低风险", value: "42", height: 72, type: "green" }
+          ])}
+        </div>
+      `;
+    }
+
+    function renderExpense() {
+      pages.expense.innerHTML = `
+        ${pageHead("报销监控", "模拟识别员工报销中的重复发票、高频小额和异常大额风险。",
+          actionButtons(["扫描重复报销", "生成报销风险报告", "推送异常报销给审批人"]))}
+        <div class="grid cols-2" style="margin-bottom:16px;">
+          ${lineChart("报销金额趋势", ["周一", "周二", "周三", "周四", "周五", "周六"], "25,132 115,142 205,96 295,118 385,64 485,92", "#1c9bb6")}
+          ${barList("部门报销排行", [
+            { name: "市场部", value: "28.4", percent: 90 },
+            { name: "销售一部", value: "23.1", percent: 75 },
+            { name: "工程部", value: "18.7", percent: 60 },
+            { name: "运营部", value: "9.6", percent: 35 },
+            { name: "研发部", value: "6.2", percent: 24 }
+          ])}
+          ${donutChart("报销类型分布")}
+          ${columnChart("报销风险分布", [
+            { label: "重复报销", value: "3", height: 100, type: "red" },
+            { label: "高频小额", value: "5", height: 126, type: "orange" },
+            { label: "异常大额", value: "4", height: 112, type: "red" }
+          ])}
+        </div>
+        <div class="grid cols-3" style="margin-bottom:16px;">
+          <div class="card risk-card high"><div class="risk-title">重复报销</div><p class="risk-text">同一发票号、相似金额或相同供应商信息重复出现时触发预警。</p></div>
+          <div class="card risk-card"><div class="risk-title">高频小额报销</div><p class="risk-text">短周期内多笔小额交通、餐饮或办公用品报销集中提交。</p></div>
+          <div class="card risk-card high"><div class="risk-title">异常大额报销</div><p class="risk-text">单笔金额明显高于个人历史均值或部门均值，需要补充业务说明。</p></div>
+        </div>
+        <div class="card">
+          <div class="card-title">报销明细表格<small>Mock 数据</small></div>
+          ${table(["日期", "员工", "部门", "报销类型", "金额", "发票号", "风险等级", "AI 提示"], expenseRows)}
+        </div>
+      `;
+    }
+
+    function renderPurchase() {
+      pages.purchase.innerHTML = `
+        ${pageHead("采购付款", "模拟分析供应商集中度、采购类别支出趋势和市场价格联动风险。",
+          actionButtons(["分析供应商集中度", "生成采购风险提示", "模拟写入飞书多维表格"]))}
+        <div class="card ai-card" style="margin-bottom:16px;">
+          <strong>AI 提示</strong>
+          钢材价格指数近 3 个月持续上涨，工程材料类采购付款同步上升，预计未来 30 天采购付款压力增加。建议采购部门提前锁价，并对高集中度供应商开展替代方案评估。
+        </div>
+        <div class="grid cols-2" style="margin-bottom:16px;">
+          ${barList("供应商付款排行", [
+            { name: "华东钢材集团", value: "124.7", percent: 96 },
+            { name: "远筑建材", value: "43.5", percent: 48 },
+            { name: "恒安安防", value: "31.9", percent: 36 },
+            { name: "瑞林机电", value: "24.7", percent: 30 },
+            { name: "金桥电气", value: "22.5", percent: 28 }
+          ])}
+          ${lineChart("采购类别支出趋势", ["3月", "4月", "5月", "6月", "7月", "预测"], "25,142 115,124 205,116 295,92 385,68 485,48", "#2d6cdf")}
+          ${columnChart("供应商付款集中度", [
+            { label: "前一", value: "54%", height: 140, type: "red" },
+            { label: "前三", value: "71%", height: 118, type: "orange" },
+            { label: "前五", value: "83%", height: 92, type: "orange" }
+          ])}
+          ${lineChart("市场价格指数趋势", ["3月", "4月", "5月", "6月", "7月", "预测"], "25,132 115,124 205,106 295,88 385,62 485,48", "#d9822b")}
+        </div>
+        <div class="card">
+          <div class="card-title">采购付款明细表<small>Mock 数据</small></div>
+          ${table(["日期", "供应商", "采购类别", "金额", "合同编号", "付款阶段", "风险等级", "AI 提示"], purchaseRows)}
+        </div>
+      `;
+    }
+
+    function renderProject() {
+      pages.project.innerHTML = `
+        ${pageHead("工程付款", "模拟审查工程进度、付款进度、验收状态与预算使用率之间的异常关系。",
+          actionButtons(["检查付款进度风险", "生成工程付款审查意见", "推送至项目负责人"]))}
+        <div class="card ai-card" style="margin-bottom:16px;">
+          <strong>AI 提示</strong>
+          A 厂房改造项目当前工程进度为 62%，付款进度已达到 78%，存在付款进度快于工程进度的风险。建议暂缓本次付款，并要求项目负责人补充阶段验收材料。
+        </div>
+        <div class="grid cols-2" style="margin-bottom:16px;">
+          ${progressCard("项目预算使用率", [
+            { name: "A 厂房改造项目", value: 78 },
+            { name: "E 消防改造", value: 84 },
+            { name: "C 办公楼装修", value: 70 },
+            { name: "D 产线基础施工", value: 45 }
+          ])}
+          <div class="card">
+            <div class="card-title">工程进度 vs 付款进度对比图<small>百分比</small></div>
+            <div class="compare-chart">
+              <svg viewBox="0 0 520 210" preserveAspectRatio="none" aria-hidden="true">
+                <line x1="40" y1="178" x2="500" y2="178" stroke="#e5eaf2" />
+                ${[
+                  ["A 厂房", 62, 78, 70],
+                  ["B 仓储", 55, 55, 160],
+                  ["C 办公", 68, 70, 250],
+                  ["E 消防", 72, 84, 340],
+                  ["G 设备", 66, 72, 430]
+                ].map(item => `
+                  <rect x="${item[3]}" y="${178 - item[1] * 1.45}" width="24" height="${item[1] * 1.45}" rx="5" fill="#2d6cdf" />
+                  <rect x="${item[3] + 30}" y="${178 - item[2] * 1.45}" width="24" height="${item[2] * 1.45}" rx="5" fill="#d9822b" />
+                  <text x="${item[3] - 8}" y="200" font-size="12" fill="#667085">${item[0]}</text>
+                `).join("")}
+              </svg>
+              <div class="legend" style="grid-template-columns:repeat(2, max-content);">
+                <div class="legend-left"><span class="dot" style="background:#2d6cdf"></span>工程进度</div>
+                <div class="legend-left"><span class="dot" style="background:#d9822b"></span>付款进度</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="grid cols-3" style="margin-bottom:16px;">
+          <div class="card risk-card high"><div class="risk-title">A 厂房改造项目</div><p class="risk-text">付款进度 78%，工程进度 62%，阶段验收材料待补充。</p></div>
+          <div class="card risk-card high"><div class="risk-title">E 消防改造</div><p class="risk-text">验收资料缺失，付款进度达到 84%，需暂停后续付款。</p></div>
+          <div class="card risk-card"><div class="risk-title">G 设备基础改造</div><p class="risk-text">付款进度略快于工程进度，建议补充现场记录。</p></div>
+        </div>
+        <div class="card">
+          <div class="card-title">项目付款风险表<small>Mock 数据</small></div>
+          ${table(["项目名称", "合同金额", "累计付款", "工程进度", "付款进度", "验收状态", "风险等级", "AI 提示"], projectRows)}
+        </div>
+      `;
+    }
+
+    function renderRisk() {
+      pages.risk.innerHTML = `
+        ${pageHead("风险预警中心", "聚合报销、采购、预算、工程付款与市场价格联动风险，支持按等级和类型筛选。",
+          actionButtons(["一键生成风控日报", "标记为已处理", "推送高风险预警"]))}
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-title">风险等级筛选</div>
+          <div class="filter-group" id="levelFilters">
+            ${["全部", "高风险", "中风险", "低风险"].map((name, index) => `<button class="btn filter ${index === 0 ? "active" : ""}" data-level="${name}">${name}</button>`).join("")}
+          </div>
+          <div class="card-title" style="margin-top:14px;">风险类型筛选</div>
+          <div class="filter-group" id="typeFilters">
+            ${["全部", "重复报销", "预算超支", "供应商集中度", "市场价格上涨", "工程付款超前", "尾款风险"].map((name, index) => `<button class="btn filter ${index === 0 ? "active" : ""}" data-type="${name}">${name}</button>`).join("")}
+          </div>
+        </div>
+        <div class="grid cols-3" style="margin-bottom:16px;">
+          <div class="card risk-card high"><div class="risk-title">A 厂房改造项目</div><p class="risk-text">付款进度快于工程进度 16 个百分点，建议暂缓付款。</p></div>
+          <div class="card risk-card high"><div class="risk-title">华东钢材集团</div><p class="risk-text">供应商集中度较高，且钢材价格持续上涨。</p></div>
+          <div class="card ai-card"><strong>AI 处理建议</strong>优先处理工程付款超前、重复报销和供应商集中度风险。建议生成风控日报后推送至财务负责人、采购负责人和项目负责人。</div>
+        </div>
+        <div class="card">
+          <div class="card-title">风险列表表格<small id="riskCount">10 条</small></div>
+          <div id="riskTable"></div>
+        </div>
+      `;
+      renderRiskTable();
+    }
+
+    function renderRiskTable() {
+      const level = document.querySelector("#levelFilters .active")?.dataset.level || "全部";
+      const type = document.querySelector("#typeFilters .active")?.dataset.type || "全部";
+      const filtered = riskRows.filter(row => {
+        const levelMatch = level === "全部" || row[3] === level;
+        const typeMatch = type === "全部" || row[1] === type;
+        return levelMatch && typeMatch;
+      });
+      document.getElementById("riskTable").innerHTML = table(["预警时间", "风险类型", "关联对象", "风险等级", "风险说明", "建议处理动作"], filtered);
+      document.getElementById("riskCount").textContent = `${filtered.length} 条`;
+    }
+
+    function renderReport() {
+      pages.report.innerHTML = `
+        ${pageHead("AI 分析报告", "模拟由 AI 生成的财务风控与资金预测报告，可导出为 Markdown 文件。",
+          actionButtons(["重新生成报告", "下载报告", "创建飞书文档", "发送到财务群"]))}
+        <div class="card report">
+          ${markdownToHtml(reportMarkdown)}
+        </div>
+      `;
+    }
+
+    function markdownToHtml(markdown) {
+      return markdown
+        .split("\n")
+        .map(line => {
+          if (line.startsWith("# ")) return `<h2>${line.slice(2)}</h2>`;
+          if (line.startsWith("## ")) return `<h3>${line.slice(3)}</h3>`;
+          if (line.startsWith("- ")) return `<li>${line.slice(2)}</li>`;
+          if (line.trim() === "") return "";
+          return `<p>${line}</p>`;
+        })
+        .join("")
+        .replace(/(<li>.*?<\/li>)+/g, match => `<ul>${match}</ul>`);
+    }
+
+    function renderAbout() {
+      pages.about.innerHTML = `
+        ${pageHead("系统说明", "当前 Demo 是用于企业 AI 比赛答辩展示的 Throwaway Prototype，不连接任何真实系统。",
+          actionButtons(["模拟检查接入状态", "查看正式版规划"]))}
+        <div class="grid cols-2">
+          <div class="card">
+            <div class="card-title">当前原型边界</div>
+            <div class="explain-list">
+              <div class="explain-item"><span class="check">✓</span><div>当前版本使用脱敏模拟数据，所有数据均写死在前端 JavaScript 数组中。</div></div>
+              <div class="explain-item"><span class="check">✓</span><div>当前版本只验证界面、流程和 AI 介入点，适合比赛答辩截图和现场演示。</div></div>
+              <div class="explain-item"><span class="check">✓</span><div>当前版本不连接真实飞书、不处理真实财务数据、不调用真实大模型 API。</div></div>
+              <div class="explain-item"><span class="check">✓</span><div>当前文件为纯前端静态页面，双击 index.html 即可在浏览器中打开。</div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">正式版接入规划</div>
+            <div class="explain-list">
+              <div class="explain-item"><span class="check">✓</span><div>接入飞书审批，采集员工报销、采购付款、工程付款等流程数据。</div></div>
+              <div class="explain-item"><span class="check">✓</span><div>接入飞书多维表格，沉淀风控台账、处理状态和责任人协同记录。</div></div>
+              <div class="explain-item"><span class="check">✓</span><div>接入财务系统、预算系统和合同系统，形成真实资金预测与预算预警。</div></div>
+              <div class="explain-item"><span class="check">✓</span><div>接入大模型 API、真实风控规则和权限系统，完成风险识别、报告生成和闭环处置。</div></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function downloadReport() {
+      const blob = new Blob([reportMarkdown], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "财务风控与资金预测报告.md";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast("报告下载已生成：当前为 Mock Markdown 文件。");
+    }
+
+    /* ==========================================================
+       初始化与交互绑定
+       ========================================================== */
+    function renderAllPages() {
+      renderOverview();
+      renderExpense();
+      renderPurchase();
+      renderProject();
+      renderRisk();
+      renderReport();
+      renderAbout();
+    }
+
+    function switchPage(pageId) {
+      document.querySelectorAll(".nav-item").forEach(item => {
+        item.classList.toggle("active", item.dataset.page === pageId);
+      });
+      document.querySelectorAll(".page").forEach(page => {
+        page.classList.toggle("active", page.id === pageId);
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.addEventListener("click", event => {
+      const nav = event.target.closest(".nav-item");
+      if (nav) {
+        switchPage(nav.dataset.page);
+        return;
+      }
+
+      const levelButton = event.target.closest("[data-level]");
+      if (levelButton) {
+        document.querySelectorAll("[data-level]").forEach(btn => btn.classList.remove("active"));
+        levelButton.classList.add("active");
+        renderRiskTable();
+        showToast("筛选条件已更新。");
+        return;
+      }
+
+      const typeButton = event.target.closest("[data-type]");
+      if (typeButton) {
+        document.querySelectorAll("[data-type]").forEach(btn => btn.classList.remove("active"));
+        typeButton.classList.add("active");
+        renderRiskTable();
+        showToast("筛选条件已更新。");
+        return;
+      }
+
+      const action = event.target.closest("[data-action]");
+      if (action) {
+        if (action.textContent.trim() === "下载报告") {
+          downloadReport();
+        } else {
+          showToast();
+        }
+      }
+    });
+
+    renderAllPages();
+  </script>
+</body>
+</html>
