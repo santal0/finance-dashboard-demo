@@ -415,6 +415,18 @@
       font-size: 12px;
     }
 
+    .wide-bar-row {
+      grid-template-columns: 154px 1fr 58px;
+      align-items: start;
+    }
+
+    .wide-bar-name {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      line-height: 1.45;
+    }
+
     .donut-wrap {
       display: grid;
       grid-template-columns: 150px 1fr;
@@ -500,6 +512,130 @@
       color: var(--muted);
       font-size: 12px;
       text-align: center;
+    }
+
+    .double-bar-chart {
+      min-height: 236px;
+      display: flex;
+      align-items: flex-end;
+      gap: 18px;
+      padding: 18px 8px 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .double-bar-group {
+      flex: 1;
+      min-width: 64px;
+      display: grid;
+      gap: 8px;
+      justify-items: center;
+    }
+
+    .double-bars {
+      height: 150px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .double-bar {
+      width: 20px;
+      min-height: 4px;
+      border-radius: 5px 5px 0 0;
+      background: var(--blue);
+    }
+
+    .double-bar.budget,
+    .double-bar.payment {
+      background: var(--orange);
+    }
+
+    .double-bar.progress {
+      background: var(--blue);
+    }
+
+    .double-bar-label {
+      min-height: 34px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      text-align: center;
+    }
+
+    .double-bar-values {
+      color: #344054;
+      font-size: 12px;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .chart-note {
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: var(--radius);
+      background: var(--blue-soft);
+      color: #17345e;
+      line-height: 1.7;
+    }
+
+    .mini-status {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 42px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .mini-status.ok {
+      color: var(--green);
+      background: var(--green-soft);
+    }
+
+    .mini-status.attention {
+      color: var(--orange);
+      background: var(--orange-soft);
+    }
+
+    .mini-status.warn {
+      color: var(--red);
+      background: var(--red-soft);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .summary-item {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #ffffff;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .summary-value {
+      margin-top: 7px;
+      color: #162238;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .summary-text {
+      margin-top: 12px;
+      color: #43546d;
+      line-height: 1.7;
     }
 
     /* =========================
@@ -764,6 +900,19 @@
       .donut-wrap {
         grid-template-columns: 1fr;
       }
+
+      .wide-bar-row {
+        grid-template-columns: 132px 1fr 52px;
+      }
+
+      .double-bar-chart,
+      .summary-grid {
+        overflow-x: auto;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -870,35 +1019,47 @@
       ["2026-07-01", "陈晓敏", "工程条线", "项目管理中心", "管理费用", "差旅费", "8,260", "FP2026070101", "中风险", "同线路 15 天内出现 3 次报销，建议复核行程必要性。"],
       ["2026-07-01", "李文浩", "租售条线", "商业中心", "营销费用", "业务招待费", "12,480", "FP2026070102", "高风险", "预算使用率已超过 100%，建议复核接待必要性。"],
       ["2026-07-02", "赵宁", "工程条线", "设计中心", "管理费用", "办公费", "980", "FP2026070201", "低风险", "金额与部门历史区间匹配。"],
-      ["2026-07-02", "王璐", "租售条线", "商住/商办租售线", "营销费用", "差旅费", "4,280", "FP2026070202", "中风险", "近 7 天交通与差旅类提交频次偏高。"],
+      ["2026-07-02", "王璐", "租售条线", "商住/商办租售线", "营销费用", "差旅费", "4,280", "FP2026070202", "中风险", "近 7 天差旅费提交频次偏高，建议核对出差审批单。"],
       ["2026-07-03", "周立", "工程条线", "成本中心-合约部", "管理费用", "会务费", "6,780", "FP2026070301", "低风险", "合同评审会务记录与审批附件匹配。"],
       ["2026-07-03", "林佳", "租售条线", "产地策划中心", "营销费用", "推广费及活动费", "18,900", "FP2026070302", "高风险", "发票号与历史活动费用存在相似记录，建议查重。"],
       ["2026-07-04", "孙凯", "工程条线", "监控中心", "管理费用", "通讯费", "350", "FP2026070401", "低风险", "金额较小且审批链完整。"],
       ["2026-07-05", "何雨", "工程条线", "人力资源中心", "管理费用", "招聘费", "9,600", "FP2026070501", "中风险", "招聘服务方首次出现，建议补充服务成果附件。"],
       ["2026-07-06", "马骁", "租售条线", "客服中心", "营销费用", "佣金", "15,260", "FP2026070601", "高风险", "佣金比例接近合同上限，需二次确认成交归属。"],
-      ["2026-07-07", "郑可", "工程条线", "财务中心", "管理费用", "审计费", "11,240", "FP2026070701", "低风险", "审计事项与年度计划匹配。"]
+      ["2026-07-07", "郑可", "工程条线", "财务中心", "管理费用", "福利费", "11,240", "FP2026070701", "低风险", "福利费事项与年度员工关怀计划匹配。"]
     ];
 
     const projectRows = [
-      ["A 厂房改造项目", "780 万", "608 万", "62%", "78%", "阶段验收待补充", "高风险", "付款进度快于工程进度，建议暂缓付款。"],
-      ["B 仓储扩建项目", "520 万", "286 万", "55%", "55%", "已验收", "低风险", "工程进度与付款进度基本一致。"],
-      ["C 办公楼装修", "260 万", "182 万", "68%", "70%", "部分验收", "中风险", "付款略快于工程进度，需关注尾款比例。"],
-      ["D 产线基础施工", "910 万", "410 万", "48%", "45%", "已验收", "低风险", "付款节奏可控。"],
-      ["E 消防改造", "145 万", "122 万", "72%", "84%", "验收资料缺失", "高风险", "验收材料不足且付款进度偏快。"],
-      ["F 园区道路修缮", "330 万", "196 万", "61%", "59%", "已验收", "低风险", "进度匹配。"],
-      ["G 设备基础改造", "440 万", "315 万", "66%", "72%", "部分验收", "中风险", "建议补充现场照片和监理记录。"],
-      ["H 实验室升级", "390 万", "136 万", "38%", "35%", "已验收", "低风险", "付款进度低于工程进度。"]
+      ["深圳建工集团有限公司", "780 万", "608 万", "62%", "78%", "阶段验收待补充", "高风险", "付款比例超过工程进度 16 个百分点，建议暂缓付款并补充阶段验收资料。"],
+      ["华南基础设施建设有限公司", "520 万", "286 万", "55%", "55%", "已验收", "低风险", "付款比例与工程进度一致，合同节点匹配。"],
+      ["中建南方工程有限公司", "260 万", "182 万", "68%", "70%", "部分验收", "中风险", "付款比例略高于工程进度，需核对合同付款节点。"],
+      ["深业安装工程有限公司", "910 万", "410 万", "48%", "45%", "已验收", "低风险", "付款比例低于工程进度，当前正常。"],
+      ["粤海市政建设有限公司", "145 万", "122 万", "72%", "84%", "验收资料缺失", "高风险", "付款比例超过工程进度且验收资料不足，建议暂停后续付款。"],
+      ["前海公共配套建设有限公司", "330 万", "196 万", "61%", "59%", "已验收", "低风险", "付款比例低于工程进度，付款节奏可控。"]
     ];
 
     const incomeRows = [
-      ["2026-07-01", "租赁收入", "一期 A 型厂房蓝谷", "厂房 / 蓝谷", "1,200 ㎡", "68.5 万", "68.5 万", "已回款", "租赁款到账稳定，可作为本月收入底盘。"],
-      ["2026-07-02", "销售收入", "一期 A 型厂房红谷", "厂房 / 红谷", "860 ㎡", "42.6 万", "39.8 万", "部分回款", "存在尾款待跟进，建议同步销售负责人。"],
-      ["2026-07-03", "租赁收入", "一期 A 型厂房紫谷", "厂房 / 紫谷", "850 ㎡", "46.2 万", "46.2 万", "已回款", "回款状态正常，租赁贡献稳定。"],
-      ["2026-07-04", "销售收入", "二期 A 型厂房", "厂房 / A 型", "1,080 ㎡", "58.9 万", "52.1 万", "部分回款", "建议在月底前完成剩余尾款催收。"],
-      ["2026-07-05", "其他收入", "二期 B 型厂房", "厂房 / B 型", "720 ㎡", "24.6 万", "24.6 万", "已回款", "配套服务收入已到账，纳入其他收入。"],
-      ["2026-07-06", "销售收入", "二期 C 型厂房", "厂房 / C 型", "1,460 ㎡", "84.9 万", "84.5 万", "基本回款", "销售收入正常到账，少量尾款持续跟进。"],
-      ["2026-07-07", "营业外收入", "一期 A 型厂房蓝谷", "厂房 / 蓝谷", "—", "15.3 万", "15.3 万", "已回款", "一次性营业外收入已确认，后续不宜作为持续性收入判断。"],
-      ["2026-07-08", "租赁收入", "二期 B 型厂房", "厂房 / B 型", "640 ㎡", "31.5 万", "0 万", "待回款", "需提醒客户付款，避免影响月末回款率。"]
+      ["2026-07-01", "新租", "深圳启明科技有限公司", "商业写字楼", "1,200 ㎡", "68.5 万", "68.5 万", "0 万", "应收已全额回收，可作为本月收入底盘。"],
+      ["2026-07-02", "销售", "华南智造发展有限公司", "独栋办公", "860 ㎡", "42.6 万", "39.8 万", "2.8 万", "存在小额欠款，建议同步销售负责人跟进。"],
+      ["2026-07-03", "续租", "蓝谷商业运营有限公司", "公寓", "850 ㎡", "46.2 万", "46.2 万", "0 万", "续租客户付款稳定，收入贡献较稳。"],
+      ["2026-07-04", "销售", "研祥科创服务有限公司", "商业写字楼", "1,080 ㎡", "58.9 万", "52.1 万", "6.8 万", "商业写字楼客户欠款偏高，建议在月底前完成催收。"],
+      ["2026-07-05", "其他", "星河产业发展有限公司", "商业写字楼", "720 ㎡", "24.6 万", "24.6 万", "0 万", "配套服务收入已到账，纳入其他收入。"],
+      ["2026-07-06", "销售", "中城办公服务有限公司", "独栋办公", "1,460 ㎡", "84.9 万", "84.5 万", "0.4 万", "独栋办公销售尾款较小，保持常规跟进即可。"],
+      ["2026-07-07", "其他", "前海云谷科技有限公司", "公寓", "—", "15.3 万", "15.3 万", "0 万", "一次性收入已确认，后续不宜作为持续性收入判断。"],
+      ["2026-07-08", "新租", "南山产业服务有限公司", "独栋办公", "640 ㎡", "31.5 万", "0 万", "31.5 万", "独栋办公客户欠款金额较高，建议优先纳入催收清单。"]
+    ];
+
+    const annualIncomeBudgetData = {
+      budget: 7200,
+      currentMonth: 7,
+      actual: 3980,
+      aiTip: "按当前收入节奏推算，全年收入存在轻微缺口，需提升三季度新租转化、续租留存和销售回款效率。"
+    };
+
+    const incomeBudgetCompareData = [
+      { name: "租赁收入", actual: 286.5, budget: 300 },
+      { name: "销售收入", actual: 226.3, budget: 260 },
+      { name: "其他收入", actual: 38.6, budget: 45 },
+      { name: "营业外收入", actual: 12.4, budget: 20 }
     ];
 
     const assetRows = [
@@ -938,27 +1099,39 @@
     ];
 
     const overviewExpenseSegments = [
-      { name: "管理费用（不含工资及折旧）", percent: 12, color: "#2d6cdf" },
-      { name: "员工工资", percent: 18, color: "#1c9bb6" },
-      { name: "营销费", percent: 9, color: "#d9822b" },
-      { name: "税金支出", percent: 8, color: "#1f9d62" },
-      { name: "固定资产", percent: 7, color: "#7c5cc4" },
-      { name: "工程款支出", percent: 28, color: "#d64545" },
-      { name: "折旧及摊销", percent: 6, color: "#667085" },
-      { name: "偿还融资本金", percent: 8, color: "#b7791f" },
-      { name: "利息支出", percent: 4, color: "#0f766e" }
+      { name: "工程款支出", percent: 34, color: "#d64545" },
+      { name: "税金支出", percent: 14, color: "#1f9d62" },
+      { name: "管理费用", percent: 22, color: "#2d6cdf" },
+      { name: "营销费用", percent: 18, color: "#d9822b" },
+      { name: "财务费用", percent: 12, color: "#7c5cc4" }
     ];
 
     const expenseSegments = [
-      { name: "管理费用", percent: 40, color: "#2d6cdf" },
-      { name: "营销费用", percent: 60, color: "#d9822b" }
+      { name: "福利费", percent: 10, color: "#2d6cdf" },
+      { name: "差旅费", percent: 15, color: "#1c9bb6" },
+      { name: "业务招待费", percent: 18, color: "#d9822b" },
+      { name: "佣金", percent: 14, color: "#1f9d62" },
+      { name: "推广费及活动费", percent: 17, color: "#d64545" },
+      { name: "办公费", percent: 8, color: "#7c5cc4" },
+      { name: "通讯费", percent: 4, color: "#667085" },
+      { name: "招聘费", percent: 7, color: "#b7791f" },
+      { name: "会务费", percent: 7, color: "#0f766e" }
     ];
 
-    const incomeSegments = [
-      { name: "租赁收入", percent: 56, color: "#1f9d62" },
-      { name: "销售收入", percent: 36, color: "#2d6cdf" },
-      { name: "其他收入", percent: 5, color: "#d9822b" },
-      { name: "营业外收入", percent: 3, color: "#7c5cc4" }
+    const litigationOverviewData = {
+      activeCases: 6,
+      newCases: 1,
+      highRiskCases: 2,
+      types: "租赁纠纷、工程合同纠纷、欠款追偿",
+      status: "3 件证据补充中，2 件协商处理中，1 件等待开庭。",
+      aiTip: "本月诉讼风险主要集中在租赁欠款和工程结算争议，建议同步法务、财务与业务负责人跟进。"
+    };
+
+    const projectProgressCompareData = [
+      { name: "前期工程", progress: 80, payment: 72 },
+      { name: "建安费", progress: 58, payment: 64 },
+      { name: "基础设施费", progress: 46, payment: 38 },
+      { name: "公配套", progress: 35, payment: 48 }
     ];
 
     const assetStatusSegments = [
@@ -979,14 +1152,14 @@
 
     const riskRows = [
       ["2026-07-03 09:20", "重复报销", "林佳 FP2026070302", "高风险", "疑似与历史推广活动发票重复。", "退回补充说明并要求上传原始发票。"],
-      ["2026-07-03 10:05", "工程付款超前", "A 厂房改造项目", "高风险", "付款进度 78%，工程进度 62%。", "暂缓付款，要求补充阶段验收材料。"],
+      ["2026-07-03 10:05", "工程付款超前", "建安费", "高风险", "付款比例 64%，工程进度 58%。", "暂缓付款，要求补充阶段验收材料。"],
       ["2026-07-03 10:36", "招待费预算超支", "商业中心", "高风险", "预算使用率 128%，超预算 28%。", "复核接待必要性，并冻结非必要接待支出。"],
-      ["2026-07-03 11:10", "验收资料缺失", "E 消防改造", "高风险", "付款进度 84%，验收资料缺失。", "暂停后续付款并安排现场复核。"],
+      ["2026-07-03 11:10", "验收资料缺失", "公配套", "高风险", "付款比例 48%，验收资料缺失。", "暂停后续付款并安排现场复核。"],
       ["2026-07-03 12:18", "预算超支", "产地策划中心活动预算", "中风险", "推广费及活动费使用节奏偏快。", "压降非核心活动并复核投放效果。"],
-      ["2026-07-03 13:30", "回款延期", "二期 B 型厂房", "中风险", "租赁款仍处于待回款状态。", "提醒客户付款并同步租售负责人。"],
+      ["2026-07-03 13:30", "欠款逾期", "南山产业服务有限公司", "中风险", "新租应收欠款金额较高。", "提醒客户付款并同步租售负责人。"],
       ["2026-07-03 14:15", "出租率下滑", "公寓", "中风险", "待租面积连续两个月上升。", "优先推动公寓待租面积去化。"],
       ["2026-07-03 15:02", "出售率低于目标", "独栋办公", "高风险", "出售率 30.9%，低于月度目标。", "组织重点客户跟进，调整销售策略。"],
-      ["2026-07-03 15:40", "工程付款超前", "G 设备基础改造", "中风险", "付款进度 72%，工程进度 66%。", "补充现场照片和监理记录。"],
+      ["2026-07-03 15:40", "工程付款超前", "中建南方工程有限公司", "中风险", "付款比例 70%，工程进度 68%。", "补充现场照片和监理记录。"],
       ["2026-07-03 16:05", "内部自用面积占比偏高", "商业写字楼", "低风险", "内部自用面积需持续跟踪。", "月度复核自用用途和面积释放计划。"]
     ];
 
@@ -996,27 +1169,27 @@
 本月营业收入 512.8 万元，总支出 328.6 万元，收入减支出后净流入 184.2 万元，现金流状态整体健康。投入产出为 1.56，说明本月收入可以覆盖当月支出，但未来 30 天工程节点款预计集中释放 286.0 万元，需要保持滚动排期。
 
 ## 2. 营业收入分析
-本月收入由租赁收入、销售收入、其他收入和营业外收入构成。租赁收入贡献稳定，销售收入仍有部分尾款待跟进；月度面积指标完成率 84.2%，月度金额指标完成率 85.5%，租赁收入目标完成率 95.5%，销售收入目标完成率 75.4%，建议继续跟进二期厂房销售尾款与待回款租赁客户。
+本月收入由租赁收入、销售收入、其他收入和营业外收入构成。租赁收入贡献稳定，销售收入仍有部分客户欠款待跟进；月度面积指标完成率 84.2%，月度金额指标完成率 85.5%，租赁收入目标完成率 95.5%，销售收入目标完成率 75.4%，建议继续跟进商业写字楼和独栋办公相关客户的欠款回收。
 
 ## 3. 报销费用与费效比分析
 报销费用分为管理费用和营销费用两类。当前管理费率为 3.0%，营销费率为 4.5%，公式分别为管理费用 / 营业收入、营销费用 / 营业收入。招待费方面，商业中心占比偏高，预算使用率超过 100%，超预算 28%；项目管理中心预算使用率也超过 100%，超预算 6%，建议复核接待必要性和预算控制。
 
 ## 4. 工程付款风险
-工程付款中 A 厂房改造项目当前工程进度为 62%，付款进度达到 78%，存在付款进度快于工程进度的风险。E 消防改造项目验收材料缺失，付款进度达到 84%，建议暂停后续支付并安排现场复核。
+工程付款中建安费和公配套存在付款比例高于工程进度的风险，建议暂停相关后续支付，核对合同付款节点，并补充阶段验收资料与现场进度确认记录。前期工程和基础设施费付款比例未超过工程进度，当前判断为正常。
 
 ## 5. 房屋资产租售分析
 房屋资产覆盖公寓、商业写字楼和独栋办公三类业态。商业写字楼出租率较高，运营效率优于整体水平；独栋办公待售面积偏高，出售率低于目标；公寓内部自用面积占比较高。建议优先推动待租面积去化，并将独栋办公销售作为下月重点。
 
 ## 6. 风险预警汇总
-本月风险集中在重复报销、预算超支、招待费预算超支、工程付款超前、验收资料缺失、回款延期、出租率下滑和出售率低于目标。高风险事项建议优先派发给财务负责人、项目负责人和租售负责人闭环处理。
+本月风险集中在重复报销、预算超支、招待费预算超支、工程付款超前、验收资料缺失、欠款逾期、出租率下滑和出售率低于目标。高风险事项建议优先派发给财务负责人、项目负责人和租售负责人闭环处理。
 
 ## 7. 未来 7/30/90 天资金压力预测
 - 未来 7 天预计支出 96.5 万元，主要来自审批中的报销和小额工程节点款。
 - 未来 30 天预计支出 415.8 万元，其中工程节点款压力最明显。
-- 未来 90 天预计支出 1,126.0 万元，需结合合同节点、工程验收、回款台账和预算释放计划进行滚动预测。
+- 未来 90 天预计支出 1,126.0 万元，需结合合同节点、工程验收、应收欠款台账和预算释放计划进行滚动预测。
 
 ## 8. 管理建议
-建议将工程付款超前、招待费预算超支、回款延期和房屋资产去化效率纳入月度经营会固定议题。正式版可接入飞书审批、飞书多维表格、财务系统、预算系统、合同系统、租赁系统、销售系统、回款台账、房屋资产台账和大模型 API，形成从数据采集、规则识别、AI 分析到协同处置的闭环。`;
+建议将工程付款超前、招待费预算超支、欠款逾期和房屋资产去化效率纳入月度经营会固定议题。正式版可接入飞书审批、飞书多维表格、财务系统、预算系统、合同系统、租赁系统、销售系统、应收欠款台账、房屋资产台账和大模型 API，形成从数据采集、规则识别、AI 分析到协同处置的闭环。`;
 
     const pages = {
       overview: document.getElementById("overview"),
@@ -1159,8 +1332,106 @@
       `;
     }
 
-    function incomeDonutChart(title) {
-      return donutChart(title, incomeSegments);
+    function overviewExpenseDonutChart() {
+      return donutChart("支出类型占比", overviewExpenseSegments);
+    }
+
+    function expenseStructureDonutChart() {
+      return donutChart("报销费用结构", expenseSegments);
+    }
+
+    function litigationOverviewCard() {
+      return `
+        <div class="card">
+          <div class="card-title">诉讼情况<small>驾驶舱概览</small></div>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <div class="summary-label">在诉案件数量</div>
+              <div class="summary-value">${litigationOverviewData.activeCases} 件</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">本月新增案件数量</div>
+              <div class="summary-value">${litigationOverviewData.newCases} 件</div>
+            </div>
+            <div class="summary-item">
+              <div class="summary-label">高风险案件数量</div>
+              <div class="summary-value" style="color:var(--red)">${litigationOverviewData.highRiskCases} 件</div>
+            </div>
+            <div class="summary-item" style="grid-column:1 / -1;">
+              <div class="summary-label">主要诉讼类型</div>
+              <div class="summary-value" style="font-size:15px;">${litigationOverviewData.types}</div>
+            </div>
+          </div>
+          <div class="summary-text"><strong>当前处理状态：</strong>${litigationOverviewData.status}</div>
+          <div class="chart-note"><strong>AI 提示</strong>${litigationOverviewData.aiTip}</div>
+        </div>
+      `;
+    }
+
+    function annualIncomeBudgetCard(data = annualIncomeBudgetData) {
+      const timeProgress = data.currentMonth / 12;
+      const annualRate = data.actual / data.budget;
+      const target = data.budget * timeProgress;
+      const gap = timeProgress - annualRate;
+      const judgement = annualRate >= timeProgress
+        ? "有望达成"
+        : gap <= 0.05
+          ? "略低于进度，需关注"
+          : "达成风险较高";
+      const statusClass = judgement === "有望达成" ? "ok" : judgement === "达成风险较高" ? "warn" : "attention";
+      const fields = [
+        ["年度收入预算", `${data.budget} 万`],
+        ["当前月份", `${data.currentMonth} 月`],
+        ["时间进度", `${(timeProgress * 100).toFixed(1)}%`],
+        ["累计实际收入", `${data.actual} 万`],
+        ["累计预算进度目标", `${target.toFixed(0)} 万`],
+        ["年度预算达成率", `${(annualRate * 100).toFixed(1)}%`]
+      ];
+
+      return `
+        <div class="card">
+          <div class="card-title">年度预算达成情况<small>按当前月份测算</small></div>
+          <div class="summary-grid">
+            ${fields.map(item => `
+              <div class="summary-item">
+                <div class="summary-label">${item[0]}</div>
+                <div class="summary-value">${item[1]}</div>
+              </div>
+            `).join("")}
+          </div>
+          <div class="summary-text">
+            <strong>达成判断：</strong><span class="mini-status ${statusClass}">${judgement}</span>
+          </div>
+          <div class="chart-note"><strong>AI 提示</strong>${data.aiTip}</div>
+        </div>
+      `;
+    }
+
+    function doubleBarChart(title, data, small = "单位：万元") {
+      const maxValue = Math.max(...data.flatMap(item => [item.actual, item.budget]));
+      const barHeight = value => Math.max(4, value / maxValue * 150).toFixed(1);
+
+      return `
+        <div class="card">
+          <div class="card-title">${title}<small>${small}</small></div>
+          <div class="double-bar-chart">
+            ${data.map(item => `
+              <div class="double-bar-group">
+                <div class="double-bars">
+                  <div class="double-bar actual" style="height:${barHeight(item.actual)}px"></div>
+                  <div class="double-bar budget" style="height:${barHeight(item.budget)}px"></div>
+                </div>
+                <div class="double-bar-label">${item.name}</div>
+                <div class="double-bar-values">实际 ${item.actual}<br>预算 ${item.budget}</div>
+              </div>
+            `).join("")}
+          </div>
+          <div class="legend" style="grid-template-columns:repeat(2, max-content);margin-top:10px;">
+            <div class="legend-left"><span class="dot" style="background:#2d6cdf"></span>实际收入</div>
+            <div class="legend-left"><span class="dot" style="background:#d9822b"></span>预算目标</div>
+          </div>
+        </div>
+      `;
     }
 
     function lineChart(title, labels, points, color = "#2d6cdf") {
@@ -1230,6 +1501,23 @@
       `;
     }
 
+    function expenseDepartmentRank(title, data, small = "单位：万元") {
+      return `
+        <div class="card">
+          <div class="card-title">${title}<small>${small}</small></div>
+          <div class="bar-list">
+            ${data.map(item => `
+              <div class="bar-row wide-bar-row">
+                <div class="bar-name wide-bar-name">${item.name}</div>
+                <div class="bar-track"><div class="bar-fill" style="width:${item.percent}%"></div></div>
+                <div class="bar-value">${item.value}</div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
     function donutChart(title, data = overviewExpenseSegments) {
       let cursor = 0;
       const gradient = data.map(item => {
@@ -1268,6 +1556,42 @@
       `;
     }
 
+    function projectProgressCompareChart(data = projectProgressCompareData) {
+      const warnings = data.filter(item => item.payment > item.progress);
+      const normal = data.filter(item => item.payment <= item.progress);
+      const height = value => Math.max(4, value * 1.5).toFixed(1);
+
+      return `
+        <div class="card">
+          <div class="card-title">工程进度 vs 付款比例对比图<small>百分比</small></div>
+          <div class="double-bar-chart">
+            ${data.map(item => {
+              const warning = item.payment > item.progress;
+              return `
+                <div class="double-bar-group">
+                  <div class="double-bars">
+                    <div class="double-bar progress" style="height:${height(item.progress)}px"></div>
+                    <div class="double-bar payment" style="height:${height(item.payment)}px"></div>
+                  </div>
+                  <div class="double-bar-label">${item.name}</div>
+                  <span class="mini-status ${warning ? "warn" : "ok"}">${warning ? "预警" : "正常"}</span>
+                  <div class="double-bar-values">进度 ${item.progress}%<br>付款 ${item.payment}%</div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+          <div class="legend" style="grid-template-columns:repeat(2, max-content);margin-top:10px;">
+            <div class="legend-left"><span class="dot" style="background:#2d6cdf"></span>工程进度</div>
+            <div class="legend-left"><span class="dot" style="background:#d9822b"></span>付款比例</div>
+          </div>
+          <div class="chart-note">
+            <strong>AI 提示</strong>
+            ${warnings.map(item => item.name).join("和")}存在付款比例高于工程进度的情况，建议核查合同付款节点、阶段验收资料及现场进度确认记录；${normal.map(item => item.name).join("和")}付款比例未超过工程进度，当前判断为正常。
+          </div>
+        </div>
+      `;
+    }
+
     function progressCard(title, data, small = "预算消耗") {
       return `
         <div class="card">
@@ -1294,7 +1618,7 @@
         ${metricCards(metricData, ["净流入", "现金流状态"])}
         <div class="card ai-card" style="margin-bottom:16px;">
           <strong>AI 摘要</strong>
-          本月营业收入覆盖本月支出，收入 - 支出后净流入 184.2 万元，现金流状态健康。未来 30 天工程节点款预计集中释放，需关注付款进度快于工程进度的项目；商业中心和项目管理中心招待费预算使用率超过 100%，建议复核接待必要性。房屋资产方面，商业写字楼出租率较高，独栋办公出售率偏低，需要推动待租待售面积去化。
+          本月营业收入覆盖本月支出，收入 - 支出后净流入 184.2 万元，现金流状态健康。未来 30 天工程节点款预计集中释放，需关注付款比例高于工程进度的科目；商业中心和项目管理中心招待费预算使用率超过 100%，建议复核接待必要性。房屋资产方面，商业写字楼出租率较高，独栋办公出售率偏低，需要推动待租待售面积去化。
         </div>
         <div style="margin-bottom:16px;">
           ${cashFlowFormulaCard()}
@@ -1307,18 +1631,19 @@
             { name: "租赁收入目标完成率", value: incomeTargetData.leaseIncomeRate },
             { name: "销售收入目标完成率", value: incomeTargetData.salesIncomeRate }
           ])}
-          ${donutChart("支出类型占比", overviewExpenseSegments)}
           ${progressCard("房屋资产运营效率", [
             { name: "综合出租率", value: 78 },
             { name: "综合出售率", value: 50 },
             { name: "待租面积去化进度", value: 72 },
             { name: "待售面积去化进度", value: 46 }
           ], "租售状态")}
+          ${overviewExpenseDonutChart()}
           ${columnChart("风险等级分布", [
             { label: "高风险", value: "5", height: 138, type: "red" },
             { label: "中风险", value: "4", height: 104, type: "orange" },
             { label: "低风险", value: "1", height: 72, type: "green" }
           ])}
+          ${litigationOverviewCard()}
         </div>
         <div class="card">
           <div class="card-title">招待费预算偏差分析<small>不展示具体金额</small></div>
@@ -1329,28 +1654,29 @@
 
     function renderIncome() {
       pages.income.innerHTML = `
-        ${pageHead("营业收入", "模拟展示租赁收入、销售收入、其他收入和营业外收入，并跟踪项目回款状态。",
+        ${pageHead("营业收入", "模拟展示租赁收入、销售收入、其他收入和营业外收入，并跟踪客户欠款金额。",
           actionButtons(["同步收入数据", "生成营业收入分析", "推送给经营负责人"]))}
         ${incomeMetricCards()}
         <div class="card ai-card" style="margin-bottom:16px;">
           <strong>AI 摘要</strong>
-          本月营业收入 512.8 万元，租赁收入贡献稳定，销售收入存在部分尾款未完全到账；其他收入和营业外收入占比较小，建议在收入预测中区分持续性收入与一次性收入。
+          本月营业收入 512.8 万元，租赁收入贡献稳定，销售收入存在部分客户欠款；其他收入和营业外收入占比较小，建议在收入预测中区分持续性收入与一次性收入。
         </div>
         <div class="grid cols-2" style="margin-bottom:16px;">
           ${lineChart("月度收入趋势", ["3月", "4月", "5月", "6月", "7月", "预测"], "25,142 115,128 205,106 295,86 385,58 485,42", "#1f9d62")}
-          ${incomeDonutChart("收入结构占比")}
+          ${doubleBarChart("实际收入 vs 预算目标对比", incomeBudgetCompareData)}
+          ${annualIncomeBudgetCard()}
           <div class="card">
-            <div class="card-title">回款状态提醒<small>项目维度</small></div>
+            <div class="card-title">欠款金额提醒<small>客户维度</small></div>
             <div class="explain-list">
-              <div class="explain-item"><span class="check">✓</span><div>一期 A 型厂房蓝谷、紫谷租赁收入已回款，收入确认较稳定。</div></div>
-              <div class="explain-item"><span class="check">✓</span><div>一期 A 型厂房红谷、二期 A 型厂房存在部分尾款，建议月底前完成跟进。</div></div>
-              <div class="explain-item"><span class="check">✓</span><div>二期 B 型厂房有待回款租赁收入，需同步租售负责人提醒客户付款。</div></div>
+              <div class="explain-item"><span class="check">✓</span><div>当前营业收入明细中存在部分客户欠款金额较高，建议优先跟进商业写字楼和独栋办公相关客户的欠款回收。</div></div>
+              <div class="explain-item"><span class="check">✓</span><div>南山产业服务有限公司欠款 31.5 万，研祥科创服务有限公司欠款 6.8 万，应纳入本周催收清单。</div></div>
+              <div class="explain-item"><span class="check">✓</span><div>深圳启明科技有限公司、蓝谷商业运营有限公司等客户欠款金额为 0，可作为稳定客户样本持续观察。</div></div>
             </div>
           </div>
         </div>
         <div class="card">
           <div class="card-title">收入明细表格<small>Mock 数据</small></div>
-          ${table(["日期", "收入类型", "客户/项目", "业态/资产", "面积", "应收金额", "实收金额", "回款状态", "AI 提示"], incomeRows)}
+          ${table(["日期", "收入类型", "客户", "业态", "面积", "应收金额", "实收金额", "欠款金额", "AI 提示"], incomeRows)}
         </div>
       `;
     }
@@ -1366,14 +1692,14 @@
         </div>
         <div class="grid cols-2" style="margin-bottom:16px;">
           ${lineChart("报销金额趋势", ["周一", "周二", "周三", "周四", "周五", "周六"], "25,132 115,142 205,96 295,118 385,64 485,92", "#1c9bb6")}
-          ${barList("部门报销排行", [
+          ${expenseDepartmentRank("部门报销排行", [
             { name: "商业中心", value: "28.4", percent: 90 },
             { name: "项目管理中心", value: "23.1", percent: 75 },
             { name: "产地策划中心", value: "18.9", percent: 62 },
             { name: "商住/商办租售线", value: "15.3", percent: 51 },
             { name: "成本中心-合约部", value: "6.8", percent: 24 }
           ])}
-          ${donutChart("报销费用结构", expenseSegments)}
+          ${expenseStructureDonutChart()}
           ${columnChart("报销风险分布", [
             { label: "重复报销", value: "3", height: 100, type: "red" },
             { label: "预算超支", value: "4", height: 126, type: "orange" },
@@ -1382,63 +1708,41 @@
         </div>
         <div class="grid cols-3" style="margin-bottom:16px;">
           <div class="card risk-card high"><div class="risk-title">重复报销</div><p class="risk-text">同一发票号、相似金额或相同供应商信息重复出现时触发预警。</p></div>
-          <div class="card risk-card"><div class="risk-title">招待费预算超支</div><p class="risk-text">招待费预算使用率超过 100% 时，需复核接待事项和审批说明。</p></div>
-          <div class="card risk-card"><div class="risk-title">费率偏离</div><p class="risk-text">管理费率、营销费率偏离目标区间时，提示经营负责人关注费用效率。</p></div>
+          <div class="card risk-card"><div class="risk-title">业务招待费预算超支</div><p class="risk-text">业务招待费预算使用率超过 100% 时，需复核接待事项和审批说明。</p></div>
+          <div class="card risk-card"><div class="risk-title">费用结构偏离</div><p class="risk-text">福利费、差旅费、佣金、推广费及活动费等报销类型偏离目标区间时，提示经营负责人关注费用效率。</p></div>
         </div>
         <div class="card">
           <div class="card-title">报销明细表格<small>Mock 数据</small></div>
-          ${table(["日期", "员工", "条线", "部门", "费用大类", "费用明细", "金额", "发票号", "风险等级", "AI 提示"], expenseRows)}
+          ${table(["日期", "员工", "条线", "部门", "费用大类", "报销类型", "金额", "发票号", "风险等级", "AI 提示"], expenseRows)}
         </div>
       `;
     }
 
     function renderProject() {
       pages.project.innerHTML = `
-        ${pageHead("工程付款", "模拟审查工程进度、付款进度、验收状态与预算使用率之间的异常关系。",
-          actionButtons(["检查付款进度风险", "生成工程付款审查意见", "推送至项目负责人"]))}
+        ${pageHead("工程付款", "模拟审查工程进度、付款比例、验收状态与预算使用率之间的异常关系。",
+          actionButtons(["检查付款比例风险", "生成工程付款审查意见", "推送至项目负责人"]))}
         <div class="card ai-card" style="margin-bottom:16px;">
           <strong>AI 提示</strong>
-          A 厂房改造项目当前工程进度为 62%，付款进度已达到 78%，存在付款进度快于工程进度的风险。建议暂缓本次付款，并要求项目负责人补充阶段验收材料。
+          建安费和公配套付款比例超过工程进度，建议暂缓相关后续付款，核对合同付款节点，并补充阶段验收资料及现场进度确认记录。前期工程和基础设施费付款比例未超过工程进度，当前判断为正常。
         </div>
         <div class="grid cols-2" style="margin-bottom:16px;">
-          ${progressCard("项目预算使用率", [
-            { name: "A 厂房改造项目", value: 78 },
-            { name: "E 消防改造", value: 84 },
-            { name: "C 办公楼装修", value: 70 },
-            { name: "D 产线基础施工", value: 45 }
+          ${progressCard("成本科目预算使用率", [
+            { name: "前期工程", value: 72 },
+            { name: "建安费", value: 64 },
+            { name: "基础设施费", value: 38 },
+            { name: "公配套", value: 48 }
           ])}
-          <div class="card">
-            <div class="card-title">工程进度 vs 付款进度对比图<small>百分比</small></div>
-            <div class="compare-chart">
-              <svg viewBox="0 0 520 210" preserveAspectRatio="none" aria-hidden="true">
-                <line x1="40" y1="178" x2="500" y2="178" stroke="#e5eaf2" />
-                ${[
-                  ["A 厂房", 62, 78, 70],
-                  ["B 仓储", 55, 55, 160],
-                  ["C 办公", 68, 70, 250],
-                  ["E 消防", 72, 84, 340],
-                  ["G 设备", 66, 72, 430]
-                ].map(item => `
-                  <rect x="${item[3]}" y="${178 - item[1] * 1.45}" width="24" height="${item[1] * 1.45}" rx="5" fill="#2d6cdf" />
-                  <rect x="${item[3] + 30}" y="${178 - item[2] * 1.45}" width="24" height="${item[2] * 1.45}" rx="5" fill="#d9822b" />
-                  <text x="${item[3] - 8}" y="200" font-size="12" fill="#667085">${item[0]}</text>
-                `).join("")}
-              </svg>
-              <div class="legend" style="grid-template-columns:repeat(2, max-content);">
-                <div class="legend-left"><span class="dot" style="background:#2d6cdf"></span>工程进度</div>
-                <div class="legend-left"><span class="dot" style="background:#d9822b"></span>付款进度</div>
-              </div>
-            </div>
-          </div>
+          ${projectProgressCompareChart()}
         </div>
         <div class="grid cols-3" style="margin-bottom:16px;">
-          <div class="card risk-card high"><div class="risk-title">A 厂房改造项目</div><p class="risk-text">付款进度 78%，工程进度 62%，阶段验收材料待补充。</p></div>
-          <div class="card risk-card high"><div class="risk-title">E 消防改造</div><p class="risk-text">验收资料缺失，付款进度达到 84%，需暂停后续付款。</p></div>
-          <div class="card risk-card"><div class="risk-title">G 设备基础改造</div><p class="risk-text">付款进度略快于工程进度，建议补充现场记录。</p></div>
+          <div class="card risk-card high"><div class="risk-title">建安费</div><p class="risk-text">付款比例 64%，工程进度 58%，建议核对合同付款节点后再判断是否支付。</p></div>
+          <div class="card risk-card high"><div class="risk-title">公配套</div><p class="risk-text">付款比例 48%，工程进度 35%，建议暂缓付款并补充验收资料。</p></div>
+          <div class="card risk-card low"><div class="risk-title">前期工程 / 基础设施费</div><p class="risk-text">付款比例未超过工程进度，当前匹配正常，保持节点复核即可。</p></div>
         </div>
         <div class="card">
           <div class="card-title">项目付款风险表<small>Mock 数据</small></div>
-          ${table(["项目名称", "合同金额", "累计付款", "工程进度", "付款进度", "验收状态", "风险等级", "AI 提示"], projectRows)}
+          ${table(["施工单位名称", "合同金额", "累计付款", "工程进度", "付款比例", "验收状态", "风险等级", "AI 提示"], projectRows)}
         </div>
       `;
     }
@@ -1499,13 +1803,13 @@
           </div>
           <div class="card-title" style="margin-top:14px;">风险类型筛选</div>
           <div class="filter-group" id="typeFilters">
-            ${["全部", "重复报销", "预算超支", "招待费预算超支", "工程付款超前", "验收资料缺失", "回款延期", "出租率下滑", "出售率低于目标", "内部自用面积占比偏高"].map((name, index) => `<button class="btn filter ${index === 0 ? "active" : ""}" data-type="${name}">${name}</button>`).join("")}
+            ${["全部", "重复报销", "预算超支", "招待费预算超支", "工程付款超前", "验收资料缺失", "欠款逾期", "出租率下滑", "出售率低于目标", "内部自用面积占比偏高"].map((name, index) => `<button class="btn filter ${index === 0 ? "active" : ""}" data-type="${name}">${name}</button>`).join("")}
           </div>
         </div>
         <div class="grid cols-3" style="margin-bottom:16px;">
-          <div class="card risk-card high"><div class="risk-title">A 厂房改造项目</div><p class="risk-text">付款进度快于工程进度 16 个百分点，建议暂缓付款。</p></div>
+          <div class="card risk-card high"><div class="risk-title">建安费</div><p class="risk-text">付款比例高于工程进度 6 个百分点，建议暂缓付款。</p></div>
           <div class="card risk-card high"><div class="risk-title">独栋办公</div><p class="risk-text">出售率低于目标，待售面积偏高，需推动销售去化。</p></div>
-          <div class="card ai-card"><strong>AI 处理建议</strong>优先处理工程付款超前、招待费预算超支、回款延期和房屋资产去化风险。建议生成风控日报后推送至财务负责人、项目负责人和租售负责人。</div>
+          <div class="card ai-card"><strong>AI 处理建议</strong>优先处理工程付款超前、招待费预算超支、欠款逾期和房屋资产去化风险。建议生成风控日报后推送至财务负责人、项目负责人和租售负责人。</div>
         </div>
         <div class="card">
           <div class="card-title">风险列表表格<small id="riskCount">${riskRows.length} 条</small></div>
@@ -1572,7 +1876,7 @@
               <div class="explain-item"><span class="check">✓</span><div>接入飞书审批，采集报销审批、工程付款审批和经营协同流程数据。</div></div>
               <div class="explain-item"><span class="check">✓</span><div>接入飞书多维表格，沉淀风控台账、处理状态和责任人协同记录。</div></div>
               <div class="explain-item"><span class="check">✓</span><div>接入财务系统、预算系统和合同系统，形成真实资金预测、预算预警和合同节点校验。</div></div>
-              <div class="explain-item"><span class="check">✓</span><div>接入租赁系统、销售系统和回款台账，形成营业收入与回款状态分析。</div></div>
+              <div class="explain-item"><span class="check">✓</span><div>接入租赁系统、销售系统和应收欠款台账，形成营业收入与欠款金额分析。</div></div>
               <div class="explain-item"><span class="check">✓</span><div>接入房屋资产台账，形成公寓、商业写字楼、独栋办公的租售和自用面积分析。</div></div>
               <div class="explain-item"><span class="check">✓</span><div>接入大模型 API、真实风控规则和权限系统，完成风险识别、报告生成和闭环处置。</div></div>
             </div>
